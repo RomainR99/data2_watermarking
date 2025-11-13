@@ -1,13 +1,15 @@
 from numpy import asarray
 from PIL import Image
-import cv2 #librairie OpenCV : pip install opencv-python
+#on enleve sinon streamlit plante
+#import cv2 #librairie OpenCV : pip install opencv-python 
 from backend import cesar_cipher   # mport de fonction
 
-def afficher_image(image_name):
-    image = cv2.imread(image_name)  # charge l'image
-    cv2.imshow("Image importée", image)  # affiche l'image
-    cv2.waitKey(0)  # attend qu'une touche soit pressée
-    cv2.destroyAllWindows()  # ferme la fenêtre
+#on enleve sinon streamlit plante
+# def afficher_image(image_name):
+#     image = cv2.imread(image_name)  # charge l'image
+#     cv2.imshow("Image importée", image)  # affiche l'image
+#     cv2.waitKey(0)  # attend qu'une touche soit pressée
+#     cv2.destroyAllWindows()  # ferme la fenêtre
 
 
 #afficher_image("photo.png")
