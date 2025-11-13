@@ -31,7 +31,7 @@ def hide(msg, image_name,key):
     image = Image.open(image_name).convert("RGB") # load image RGB
     data = asarray(image).copy()
     h, w, _ = data.shape
-    bits_message = texte_en_binaire_unicode(msg)  # converti Unicode en 21 bits
+    bits_message = texte_en_binaire_unicode(msg_chiffre)  # on encode le message CHIFFRÉ
     taille = len(bits_message)
     taille_bits = format(taille, "032b")
     bits = taille_bits + bits_message
