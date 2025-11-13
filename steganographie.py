@@ -1,125 +1,111 @@
 from numpy import asarray
 from PIL import Image
+import cv2 #librairie OpenCV : pip install opencv-python
 
-def hide(msg,image_name):
-    #image = Image.open(image_name)
-    #data = asarray(image)
-    #on force la copie
+def afficher_image(image_name):
+    image = cv2.imread(image_name)  # charge l'image
+    cv2.imshow("Image importée", image)  # affiche l'image
+    cv2.waitKey(0)  # attend qu'une touche soit pressée
+    cv2.destroyAllWindows()  # ferme la fenêtre
 
-    image = Image.open(image_name).convert("RGB")
-    data = asarray(image).copy()
+# Exemple d'utilisation
+afficher_image("photo.png")
 
-    #Convertir le message en octet
-    final_message=""
+# ==========================================================
+# Convertir texte → Unicode → binaire 21 bits
+# ==========================================================
+def texte_en_binaire_unicode(msg):
+    binaire = ""
     for lettre in msg:
-        position_ascii = ord(lettre) #donne les position des lettre de bonjour en numero ascii
-        binaire = bin(position_ascii)[2:] #donne ascii en binaire avec 0b avant chaque bianaire 
-                                                    #qu'on veut pas d'ou le sélecteure [2:]
-        #met on veut 8 chiffre donc:
-        while len(binaire) < 8:
-            binaire = "0" + binaire
-        #print(binaire) pour verifier
-        final_message += binaire
-    print("Message encodé en binaire:", final_message)   
+        code = ord(lettre)                 # Unicode (0 → 1 114 111)
+        binaire += format(code, "021b")    # 21 bits
+    return binaire
 
-    #Récupere la longueur et l'inscrit sur 2 octets (16bits) 
-    longueur = len(final_message)
-    binaire = bin(longueur)[2:] #c'est pas sur 2 octets dons on comble
-    while len(binaire)<16:
-        binaire = "0" + binaire
-    print("Taille a encoder:",binaire)
-    result_message = binaire + final_message #comme ca on encode en une fois
+# HIDE : msg -> Unicode en 21 bits 
+# pixel pair = 0, pixel impair = 1
+def hide(msg, image_name):
+    image = Image.open(image_name).convert("RGB") # load image RGB
+    data = asarray(image).copy()
+    h, w, _ = data.shape
+    bits_message = texte_en_binaire_unicode(msg)  # converti Unicode en 21 bits
+    taille = len(bits_message)
+    taille_bits = format(taille, "032b")
+    bits = taille_bits + bits_message
+    total_bits = len(bits)
 
-    print(data[0][0][0]) #on a le premier pixel colonne 0 et ligne 0 et la valeur du pixel
+    #Rend  pixels paires  0b11111110 = 254
+    for y in range(h):
+        for x in range(w):
+            for c in range(3):
+                data[y, x, c] = data[y, x, c] & 0b11111110   # LSB = 0 LSB:Least Significant Bit
+                #Il n’y a que un seul opérateur (&), donc pas besoin de parenthèses comme endessous
 
-    #print(len(data[0])) # donne nombre de colonne
-    #print(len(data)) # donne nombre de ligne
-    
-    tour=0
-    y=0
-    for line in data:
-        x=0
-        for colonne in line:
-            rgb=0
-            # for color in colonne:
-            #     valeur=data[y][x][rgb]
-            #     binaire=bin(valeur)[2:]
-            #     binaire_list = list(binaire)
-            #     del binaire_list[-1]
-            #     binaire_list.append(result_message[tour])
-            #     decimal = int("".join(binaire_list),2)
-            #     data[y][x][rgb]=decimal
-            #     tour +=1
-            #     rgb +=1
-            #     if tour>= len(result_message):
-            #         break
-            # x+=1
-            for color in colonne:
-                valeur = data[y][x][rgb]
-                # rendre la valeur paire en mettant le bit de poids faible à 0
-                valeur_pair = valeur & ~1   # efface le dernier bit → force un nombre pair
-                data[y][x][rgb] = valeur_pair
-                tour += 1
-                rgb += 1
-                if tour >= len(result_message):
+    # Encodage des bits 0b11111110 = 254
+    index = 0
+    for y in range(h):
+        for x in range(w):
+            for c in range(3):
+
+                if index >= total_bits:
                     break
 
-            x += 1
-        y+=1
-        
+                bit = int(bits[index])  # 0 ou 1
 
+                # Pixel pair
+                data[y, x, c] = (data[y, x, c] & 0b11111110) | bit
+                #opérateur & a une priorité différente de |
 
-        if tour>= len(result_message):
+                index += 1
+
+            if index >= total_bits:
+                break
+        if index >= total_bits:
             break
-    imagefinal =Image.fromarray(data)
-    imagefinal.save("SECRET.png")
+
+    # Sauvegarde image finale
+    out = Image.fromarray(data.astype("uint8"))
+    out.save("secret.png")
+    print("Message_secret.png")
+
+
 
 def discover(image_name):
-    image =Image.open(image_name)
-    data = asarray(image).copy()
 
-    tour=0
-    taille=""
-    message=""
-    taille_new=12345
-    y=0
-    for line in data:
-        x=0
-        for colonne in line:
-            rgb=0
-            for color in colonne:
-                valeur=data[y][x][rgb]
-                binaire=bin(valeur)[2:]
-                last= binaire[-1]
-                if tour<16:
-                    taille+=16
-                if tour==16:
-                    taille_new=int(taille,2)
-                if tour-16<taille_new-1:
-                    message+=last
-                if tour-16>=taille_new-1:
-                    break
-                tour+=1
-                rgb +=1
-            if tour-16<=taille_new-1:
-                break
-            x+=1
-        if tour-16>=taille_new-1:
-                break
-        y+=1
-    print(message)   
-    octet=[]
-    result = ""
-    for i in range(len(message)//8):
-        octet.append(message[i*8:(i+1)*8])
-    print(octet)
-    for oct in octet:
-        index=int(oct,2)
-        lettre_ascii=chr(index)
-        print(lettre_ascii)
-        result+=lettre_ascii
-    print("MESSAGE",str(result[2:]))
+    image = Image.open(image_name).convert("RGB")
+    data = asarray(image)
 
-#hide("bonjour","photo.png")
-discover("SECRET.png")
+    h, w, _ = data.shape
+
+    bits = []
+
+    # Lecture des LSB
+    for y in range(h):
+        for x in range(w):
+            for c in range(3):
+                bits.append(str(data[y, x, c] & 1))
+
+    bits = "".join(bits)
+
+    # 1) Lire la taille sur 32 bits
+    taille_bits = bits[:32]
+    taille = int(taille_bits, 2)
+
+    # 2) Lire les bits du message
+    message_bits = bits[32:32 + taille]
+
+    # 3) Reconstruction en blocs de 21 bits
+    texte = ""
+    for i in range(0, taille, 21):
+        bloc = message_bits[i:i+21]
+        code = int(bloc, 2)
+        texte += chr(code)
+
+    print("Message extrait :", texte)
+    return texte
+
+
+# TEST
+if __name__ == "__main__":
+    hide("Bonjour", "photo.png")
+    discover("secret.png")
 
