@@ -1,6 +1,7 @@
 from numpy import asarray
 from PIL import Image
 import cv2 #librairie OpenCV : pip install opencv-python
+from backend import cesar_cipher   # mport de fonction
 
 def afficher_image(image_name):
     image = cv2.imread(image_name)  # charge l'image
@@ -11,9 +12,8 @@ def afficher_image(image_name):
 # Exemple d'utilisation
 afficher_image("photo.png")
 
-# ==========================================================
+
 # Convertir texte → Unicode → binaire 21 bits
-# ==========================================================
 def texte_en_binaire_unicode(msg):
     binaire = ""
     for lettre in msg:
@@ -24,6 +24,8 @@ def texte_en_binaire_unicode(msg):
 # HIDE : msg -> Unicode en 21 bits 
 # pixel pair = 0, pixel impair = 1
 def hide(msg, image_name):
+    msg_chiffre = cesar_cipher(msg, key, cipher=True) #Chiffrement msg en César 
+    print("Message chiffré :", msg_chiffre)
     image = Image.open(image_name).convert("RGB") # load image RGB
     data = asarray(image).copy()
     h, w, _ = data.shape
@@ -69,8 +71,7 @@ def hide(msg, image_name):
 
 
 
-def discover(image_name):
-
+def discover(image_name: str, key: int): #key de César
     image = Image.open(image_name).convert("RGB")
     data = asarray(image)
 
@@ -86,26 +87,32 @@ def discover(image_name):
 
     bits = "".join(bits)
 
-    # 1) Lire la taille sur 32 bits
+    # Lire la taille sur 32 bits
     taille_bits = bits[:32]
     taille = int(taille_bits, 2)
 
-    # 2) Lire les bits du message
+    # Lire les bits du message
     message_bits = bits[32:32 + taille]
 
-    # 3) Reconstruction en blocs de 21 bits
-    texte = ""
+    # Reconstruction en blocs de 21 bits
+    texte_chiffre = ""
     for i in range(0, taille, 21):
         bloc = message_bits[i:i+21]
         code = int(bloc, 2)
         texte += chr(code)
 
-    print("Message extrait :", texte)
-    return texte
+    print("Texte chiffré extrait :", texte_chiffre)
+
+    # Déchiffrement César
+    texte_dechiffre = cesar_cipher(texte_chiffre, key, cipher=False)
+    print("Message extrait déchiffré :", texte_dechiffre)
+
+    return texte_dechiffre
 
 
 # TEST
 if __name__ == "__main__":
+    cle = 12
     hide("Bonjour", "photo.png")
     discover("secret.png")
 
