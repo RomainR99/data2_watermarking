@@ -39,16 +39,21 @@ watermarking_env\Scripts\activate
 
 2️⃣ Installation des librairies dans l’environnement
 
-##📥 3. Installation des dépendances
+---
+
+## 📥 3. Installation des dépendances
 
 Installer les librairies nécessaires :
-
+```bash
 pip install streamlit
 pip install numpy
 pip install pillow
 pip install opencv-python   # facultatif, non requis par Streamlit
 
+---
+
 ## 🧠 4. Fonctionnement
+
 🔒 Chiffrement César
 
 décalage Unicode modulo 1_114_112
@@ -109,10 +114,13 @@ Reformer les blocs de 21 bits → Unicode
 
 Déchiffrer avec la même clé
 
-🖥 5. Lancer l’application Streamlit
+---
 
-Depuis le dossier racine :
+## 🖥 5. Lancer l’application Streamlit
 
+Depuis le dossier racine, exécuter :
+
+```bash
 streamlit run app.py
 
 
@@ -122,7 +130,10 @@ Onglet Encoder un message
 
 Onglet Décoder un message
 
+---
+
 ##🗂 6. Structure du projet
+
 data2_watermarking/
 │
 ├── app.py                   # Interface Streamlit
@@ -135,6 +146,8 @@ data2_watermarking/
 ├── cmd_env_virtuel.png      # Capture 1
 └── cmd_librairie_python_ds_env_virtuel.png  # Capture 2
 
+---
+
 ##🛠 7. Extensions possibles
 
 ajouter AES-256 avant LSB
@@ -144,6 +157,8 @@ visualiser les bits LSB dans l’interface
 comparer l’image originale et modifiée
 
 détecter automatiquement la présence d’un message caché
+
+---
 
 ##🎉 8. Résultat final
 
