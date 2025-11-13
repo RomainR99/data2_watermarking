@@ -23,7 +23,7 @@ def texte_en_binaire_unicode(msg):
 
 # HIDE : msg -> Unicode en 21 bits 
 # pixel pair = 0, pixel impair = 1
-def hide(msg, image_name):
+def hide(msg, image_name,key):
     msg_chiffre = cesar_cipher(msg, key, cipher=True) #Chiffrement msg en César 
     print("Message chiffré :", msg_chiffre)
     image = Image.open(image_name).convert("RGB") # load image RGB
@@ -47,18 +47,13 @@ def hide(msg, image_name):
     for y in range(h):
         for x in range(w):
             for c in range(3):
-
                 if index >= total_bits:
                     break
-
                 bit = int(bits[index])  # 0 ou 1
-
                 # Pixel pair
                 data[y, x, c] = (data[y, x, c] & 0b11111110) | bit
                 #opérateur & a une priorité différente de |
-
                 index += 1
-
             if index >= total_bits:
                 break
         if index >= total_bits:
@@ -71,10 +66,9 @@ def hide(msg, image_name):
 
 
 
-def discover(image_name: str, key: int): #key de César
+def discover(image_name, key): #key de César
     image = Image.open(image_name).convert("RGB")
     data = asarray(image)
-
     h, w, _ = data.shape
 
     bits = []
@@ -99,7 +93,7 @@ def discover(image_name: str, key: int): #key de César
     for i in range(0, taille, 21):
         bloc = message_bits[i:i+21]
         code = int(bloc, 2)
-        texte += chr(code)
+        texte_chiffre += chr(code)
 
     print("Texte chiffré extrait :", texte_chiffre)
 
@@ -113,6 +107,6 @@ def discover(image_name: str, key: int): #key de César
 # TEST
 if __name__ == "__main__":
     cle = 12
-    hide("Bonjour", "photo.png")
-    discover("secret.png")
+    hide("Bonjour", "photo.png",cle)
+    discover("secret.png",cle)
 
