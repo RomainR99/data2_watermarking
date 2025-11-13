@@ -24,8 +24,9 @@ L’image résultante reste visuellement identique à l’œil humain mais conti
 
 Créer un environnement virtuel Python :
 
-```bash
+
 python3 -m venv watermarking_env
+
 
 L’activer :
 
@@ -34,17 +35,13 @@ source watermarking_env/bin/activate
 
 Windows :
 watermarking_env\Scripts\activate
-📸 Captures d’écran pédagogiques
-1️⃣ Création de l’environnement virtuel
-
-2️⃣ Installation des librairies dans l’environnement
 
 ---
 
 ## 📥 3. Installation des dépendances
 
 Installer les librairies nécessaires :
-```bash
+
 pip install streamlit
 pip install numpy
 pip install pillow
@@ -120,7 +117,7 @@ Déchiffrer avec la même clé
 
 Depuis le dossier racine, exécuter :
 
-```bash
+
 streamlit run app.py
 
 
@@ -132,7 +129,7 @@ Onglet Décoder un message
 
 ---
 
-##🗂 6. Structure du projet
+## 🗂 6. Structure du projet
 
 data2_watermarking/
 │
@@ -148,7 +145,7 @@ data2_watermarking/
 
 ---
 
-##🛠 7. Extensions possibles
+## 🛠 7. Extensions possibles
 
 ajouter AES-256 avant LSB
 
@@ -160,7 +157,7 @@ détecter automatiquement la présence d’un message caché
 
 ---
 
-##🎉 8. Résultat final
+## 🎉 8. Résultat final
 
 Ce projet combine :
 
