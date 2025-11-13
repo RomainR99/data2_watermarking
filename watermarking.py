@@ -9,8 +9,8 @@ def afficher_image(image_name):
     cv2.waitKey(0)  # attend qu'une touche soit pressée
     cv2.destroyAllWindows()  # ferme la fenêtre
 
-
-#afficher_image("photo.png")
+# Exemple d'utilisation
+afficher_image("photo.png")
 
 
 # Convertir texte → Unicode → binaire 21 bits
