@@ -125,7 +125,7 @@ Onglet Encoder un message
 Onglet Décoder un message
 
 Solution 2:
-Aller sur lien suivant : streamlit est relier à ce repo github
+Aller sur lien suivant : streamlit est relié à ce repo github
 https://data2watermarking-g84ujxqu5zvacljqbqgrys.streamlit.app/
 
 ---
