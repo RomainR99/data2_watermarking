@@ -18,19 +18,35 @@ from backend import cesar_cipher   # mport de fonction
 # Convertir texte → Unicode → binaire 21 bits
 def texte_en_binaire_unicode(msg):
     binaire = ""
-    for lettre in msg:
+    for lettre in msg: #On parcourt le message caractère par caractère.
+        #Exemple : "Bonjour" → B, o, n, j, o, u, r.
         code = ord(lettre)                 # Unicode (0 → 1 114 111)
-        binaire += format(code, "021b")    # 21 bits
-    return binaire
+        #Exemple: 'A' → 65 // 'é' → 233
+        binaire += format(code, "021b")    # 21 bits 
+        #"b" → format binaire
+        # "21b" → sur 21 bits
+        # "021b" → on complète avec des zéros à gauche pour avoir exactement 21 bits.
+        # Exemple : code = 5 → format(5, "021b") → "0000000000000000101" (21 caractères)
+        # += format :On concatène ces 21 bits à la suite dans la variable binaire
+
+    return binaire 
 
 # HIDE : msg -> Unicode en 21 bits 
 # pixel pair = 0, pixel impair = 1
 def hide(msg, image_name,key):
     msg_chiffre = cesar_cipher(msg, key, cipher=True) #Chiffrement msg en César 
     print("Message chiffré :", msg_chiffre)
-    image = Image.open(image_name).convert("RGB") # load image RGB
-    data = asarray(image).copy()
-    h, w, _ = data.shape
+    image = Image.open(image_name).convert("RGB") # load image RGB --Image.open(image_name) : ouvre l’image (via Pillow)
+        #.convert("RGB") : convertit l’image en mode RGB (3 canaux : Rouge, Vert, Bleu)
+    data = asarray(image).copy() #.copy() : pour être sûr qu’on travaille sur une copie modifiable, pas une vue.
+        #asarray(image) : C’est une fonction qui convertit un objet Python en tableau NumPy
+    h, w, _ = data.shape #tableau NumPy contient toujours un attribut pratique
+        #documentation : https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html
+        #shape:Cet attribut retourne les dimensions du tableau, sous forme d’un tuple
+        #Récupère la forme du tableau data :
+        #h : hauteur (nombre de lignes/pixels),
+        #w : largeur (colonnes),
+        # _ : nombre de canaux (3, mais on ne s’en sert pas directement → _).
     bits_message = texte_en_binaire_unicode(msg_chiffre)  # on encode le message CHIFFRÉ
     taille = len(bits_message)
     taille_bits = format(taille, "032b")
@@ -54,7 +70,11 @@ def hide(msg, image_name,key):
                 bit = int(bits[index])  # 0 ou 1
                 # Pixel pair
                 data[y, x, c] = (data[y, x, c] & 0b11111110) | bit
+                #data est en général une image sous forme de tableau NumPy
                 #opérateur & a une priorité différente de |
+                #| bit
+                #| = opérateur OR (ou logique).
+                #bit vaut 0 ou 1 (bit que tu veux insérer dans l’image).
                 index += 1
             if index >= total_bits:
                 break
@@ -65,7 +85,9 @@ def hide(msg, image_name,key):
     out = Image.fromarray(data.astype("uint8"))
     out.save("secret.png")
     print("Message_secret.png")
-
+    #astype("uint8") convertit les valeurs du tableau au type unsigned int 8 bits.
+    #uint8 = entier non signé entre 0 et 255
+    #C’est LE format attendu par PIL pour créer une image RGB ou RGBA.
 
 
 def discover(image_name, key): #key de César
