@@ -115,17 +115,18 @@ Déchiffrer avec la même clé
 
 ## 🖥 5. Lancer l’application Streamlit
 
+Solution 1:
 Depuis le dossier racine, exécuter :
-
-
 streamlit run app.py
 
 
 L’application ouvre automatiquement votre navigateur :
-
 Onglet Encoder un message
-
 Onglet Décoder un message
+
+Solution 2:
+Aller sur lien suivant : streamlit est relier à ce repo github
+https://data2watermarking-g84ujxqu5zvacljqbqgrys.streamlit.app/
 
 ---
 
@@ -141,7 +142,8 @@ data2_watermarking/
 ├── secret.png               # Image générée
 │
 ├── cmd_env_virtuel.png      # Capture 1
-└── cmd_librairie_python_ds_env_virtuel.png  # Capture 2
+├── cmd_librairie_python_ds_env_virtuel.png  # Capture 2
+└──Stéganographie_LSB _Chiffremen_César.png # Capture 3
 
 ---
 
